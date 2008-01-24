@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+  All content copyright (c) 2003-2007 Terracotta, Inc.,
+  except as may otherwise be noted in a separate copyright notice.
+  All rights reserved.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.terracotta.forge</groupId>
+    <artifactId>tim-parent</artifactId>
+    <version>1.0.4-SNAPSHOT</version>
+  </parent>
+  <properties>
+    <scala.version>2.6.1</scala.version>
+    <tc.version>2.6.0-SNAPSHOT</tc.version>
+    <forgeTags>Integration Module</forgeTags>
+    <Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+  </properties>
+
+  <packaging>jar</packaging>
+  <groupId>org.scala-lang</groupId>
+  <artifactId>tim-scala-actors-2.6.1</artifactId>
+  <version>${tc.version}</version>
+  <name>Terracotta Integration for Scala Actors 2.6.1</name>
+  <description>
+    The Terracotta Integration Module for Scala Actors.
+  </description>
+
+
+  <repositories>
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>terracotta-repository</id>
+      <url>http://www.terracotta.org/download/reflector/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>scala-tools.org</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>terracotta-repository</id>
+      <name>Terracotta Maven Repository</name>
+      <url>http://www.terracotta.org/download/reflector/maven2</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <scm>
+    <connection>scm:svn:http://svn.terracotta.org/svn/forge/projects/tim-scala-actors-2.6.1/trunk</connection>
+    <developerConnection>scm:svn:https://svn.terracotta.org/repo/forge/projects/tim-scala-actors-2.6.1/trunk</developerConnection>
+    <url>http://svn.terracotta.org/svn/forge/projects/tim-scala-actors-2.6.1/trunk</url>
+  </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.terracotta.maven.plugins</groupId>
+        <artifactId>tc-maven-plugin</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+        <configuration>
+          <bundleActivator>org.terracotta.modules.clustered-scala-actors-2.6.1</bundleActivator>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>src</descriptorRef>
+            <descriptorRef>bin</descriptorRef>
+          </descriptorRefs>
+          <outputDirectory>${project.build.directory}/site/downloads</outputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>site</phase>
+            <goals>
+              <goal>assembly</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build> 
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.terracotta</groupId>
+      <artifactId>terracotta</artifactId>
+      <version>${tc.version}</version>
+    </dependency>
+  </dependencies>
+</project>

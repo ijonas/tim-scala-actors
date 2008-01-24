@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  All content copyright (c) 2003-2007 Terracotta, Inc.,
+  except as may otherwise be noted in a separate copyright notice.
+  All rights reserved.
+
+-->
+<tc:tc-config xmlns:tc="http://www.terracotta.org/config"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.terracotta.org/schema/terracotta-4.xsd">
+
+  <servers>
+    <server host="%i" name="sample"/>
+    <update-check>
+      <enabled>true</enabled>
+    </update-check>
+  </servers>
+
+  <system>
+    <configuration-model>development</configuration-model>
+  </system>
+
+  <clients>
+    <logs>%(user.home)/terracotta/client-logs/scala/actors/%D</logs>
+    <modules>
+      <module name="clustered-scala-actors-2.6.1" version="2.6.0.SNAPSHOT"/>
+    </modules>
+  </clients>
+
+  <application>
+    <dso>     
+      
+      <!--roots>
+        <root>
+          <field-name>examples.actors.Cart$.instance</field-name>
+        </root>
+      </roots-->
+
+      <locks>
+        <named-lock>
+          <lock-name>Cart_items_write</lock-name>
+          <lock-level>write</lock-level>
+          <method-expression>* examples.actors.Cart.items_$eq(..)</method-expression>
+        </named-lock>
+        <named-lock>
+          <lock-name>Cart_items_read</lock-name>
+          <lock-level>read</lock-level>
+          <method-expression>* examples.actors.Cart.items()</method-expression>
+        </named-lock>
+      </locks>
+
+      <instrumented-classes>
+        <include>
+          <class-expression>examples.actors.*</class-expression>
+        </include>
+        <include>
+          <class-expression>scala.List</class-expression>
+        </include>
+        <include>
+          <class-expression>scala.$colon$colon</class-expression>
+        </include>
+        <include>
+          <class-expression>scala.Nil$</class-expression>
+        </include>
+      </instrumented-classes>
+    </dso>
+  </application>
+</tc:tc-config>
