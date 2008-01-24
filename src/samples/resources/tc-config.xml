@@ -23,7 +23,8 @@
     <logs>%(user.home)/terracotta/client-logs/scala/actors/%D</logs>
     
     <!-- 
-          Import the Terracotta Integration Module (TIM) for Scala Actor clustering 
+          Import the Terracotta Integration Module (TIM) for Scala Actor clustering.
+          Change the path to point to your Maven repository.
     -->
     <modules>
       <repository>file:///Users/jonas/.m2/repository</repository>
