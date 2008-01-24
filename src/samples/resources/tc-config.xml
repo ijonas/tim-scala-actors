@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
-  All content copyright (c) 2003-2007 Terracotta, Inc.,
+  All content copyright (c) 2003-2008 Terracotta, Inc.,
   except as may otherwise be noted in a separate copyright notice.
   All rights reserved.
-
 -->
 <tc:tc-config xmlns:tc="http://www.terracotta.org/config"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -23,36 +21,45 @@
 
   <clients>
     <logs>%(user.home)/terracotta/client-logs/scala/actors/%D</logs>
+    
+    <!-- 
+          Import the Terracotta Integration Module (TIM) for Scala Actor clustering 
+    -->
     <modules>
+      <repository>file:///Users/jonas/.m2/repository</repository>
       <module name="clustered-scala-actors-2.6.1" version="2.6.0.SNAPSHOT"/>
     </modules>
   </clients>
 
   <application>
     <dso>     
-      
-      <!--roots>
-        <root>
-          <field-name>examples.actors.Cart$.instance</field-name>
-        </root>
-      </roots-->
-
+      <!--
+            Add locks to the 'var' holding the state in the actor. 
+            You have to add two different locks, for read and write 
+            operations. Scala generates two different methods, the getter
+            has the same name as the 'var' while the getter has the name 
+            suffixed by '_$eq'. 
+      -->
       <locks>
         <named-lock>
           <lock-name>Cart_items_write</lock-name>
           <lock-level>write</lock-level>
-          <method-expression>* examples.actors.Cart.items_$eq(..)</method-expression>
+          <method-expression>* samples.Cart.items_$eq(..)</method-expression>
         </named-lock>
         <named-lock>
           <lock-name>Cart_items_read</lock-name>
           <lock-level>read</lock-level>
-          <method-expression>* examples.actors.Cart.items()</method-expression>
+          <method-expression>* samples.Cart.items()</method-expression>
         </named-lock>
       </locks>
-
+      
+      <!-- 
+           Add patterns matching your application specific classes and all other 
+           classes that might be either held on to by the actor or sent in a message.
+      --> 
       <instrumented-classes>
         <include>
-          <class-expression>examples.actors.*</class-expression>
+          <class-expression>samples.*</class-expression>
         </include>
         <include>
           <class-expression>scala.List</class-expression>
@@ -64,6 +71,18 @@
           <class-expression>scala.Nil$</class-expression>
         </include>
       </instrumented-classes>
+
+      <!-- 
+           Uncomment if you want to use a custom factory in order to control 
+           instantiation and scope of your actors.
+      -->
+      <!--
+      <roots>
+        <root>
+          <field-name>samples.Cart$.instance</field-name>
+        </root>
+      </roots>
+      -->
     </dso>
   </application>
 </tc:tc-config>

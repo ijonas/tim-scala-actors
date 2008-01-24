@@ -1,4 +1,4 @@
-package examples.actors
+package samples
 
 import java.util.concurrent._
 import scala.actors.Actor
@@ -13,6 +13,7 @@ object ClusteredActorsSample {
   def main(args: Array[String]) {
     val cart = new Cart //Cart()
     cart.start
+    cart.ping
     for (i <- 1 to 100) {
       java.lang.Thread.sleep(2000L)
       cart ! AddItem("Item " + i)      
@@ -21,22 +22,11 @@ object ClusteredActorsSample {
 }
 
 /**
- * Cart companion object is a factory who's sole instance in a Terracotta root: Cart.instance.
- * <p>Usage: val cart = Cart()
- */
-object Cart {
-  def apply(): Cart = {
-    if (instance == null) instance = new Cart
-    instance.start; instance
-  }
-  private[this] var instance: Cart = null
-}
-
-/**
  * Cart actor, responds to:
  * <p>-- Tick - prints out the list of current items
  * <p>-- AddItem - adds an item to the list of current items
  */
+/*
 class Cart extends Actor {
   def act() = loop(Nil)
 
@@ -54,15 +44,26 @@ class Cart extends Actor {
     ActorPing.scheduleAtFixedRate(this, Tick, 0L, 5000L)
   }
 }
+*/
+/**
+ * Cart companion object is a factory who's sole instance in a Terracotta root: Cart.instance.
+ * <p>Usage: val cart = Cart()
+ */
+object Cart {
+  def apply(): Cart = {
+    if (instance == null) instance = new Cart
+    instance.start; instance
+  }
+  private[this] var instance: Cart = null
+}
 
-/* 
+ 
   // same as above but state in a 'var' instead of passing it on recursively
   class Cart extends Actor {
    var items: List[String] = Nil
 
-   override def start = {
+   def ping = {
      ActorPing.scheduleAtFixedRate(this, Tick, 0L, 5000L)
-     super.start
    }
 
    def act() {
@@ -76,10 +77,9 @@ class Cart extends Actor {
      }
    }
  }
-*/
-/*                                                *\
- \*                                                 */
- 
+
+
+// =============================================
 /**
  * Pings an actor every X seconds.
  * 

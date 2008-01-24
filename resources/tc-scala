@@ -74,11 +74,11 @@ if $cygwin; then
 fi
 
 #SCALA_HOME=/usr/local/share/scala
-TC_SCALA_ACTORS_CONFIG_FILE=/Users/jonas/src/scala/scala-standard-examples/actors/clustered-scala-actors.conf
-TC_CONFIG_FILE=/Users/jonas/src/scala/scala-standard-examples/actors/tc-config.xml
-TC_INSTALL_DIR=/Users/jonas/src/java/tc/code/base/build/dist/terracotta-trunk-rev6699
+TC_SCALA_ACTORS_CONFIG_FILE=/Users/jonas/src/java/tc-forge/projects/tim-scala-actors-2.6.1/trunk/src/samples/resources/clustered-scala-actors.conf
+TC_CONFIG_FILE=/Users/jonas/src/java/tc-forge/projects/tim-scala-actors-2.6.1/trunk/src/samples/resources/tc-config.xml
+TC_INSTALL_DIR=/Users/jonas/src/java/tc/code/base/build/dist/terracotta-trunk-rev6814
 TC_BOOT_JAR="$TC_INSTALL_DIR"/lib/dso-boot/dso-boot-hotspot_osx_150_13.jar
-TC_TIM_SCALA_ACTORS_JAR="$TC_INSTALL_DIR"/modules/org/terracotta/modules/clustered-scala-actors-2.6.1/2.6.0-SNAPSHOT/clustered-scala-actors-2.6.1-2.6.0-SNAPSHOT.jar
+TC_TIM_SCALA_ACTORS_JAR=/Users/jonas/.m2/repository/org/terracotta/modules/clustered-scala-actors-2.6.1/2.6.0-SNAPSHOT/clustered-scala-actors-2.6.1-2.6.0-SNAPSHOT.jar
 
 
 #-Dtc.classloader.writeToDisk=true \

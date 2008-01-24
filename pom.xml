@@ -22,8 +22,8 @@
   </properties>
 
   <packaging>jar</packaging>
-  <groupId>org.scala-lang</groupId>
-  <artifactId>tim-scala-actors-2.6.1</artifactId>
+  <groupId>org.terracotta.modules</groupId>
+  <artifactId>clustered-scala-actors-2.6.1</artifactId>
   <version>${tc.version}</version>
   <name>Terracotta Integration for Scala Actors 2.6.1</name>
   <description>
@@ -81,7 +81,7 @@
         <artifactId>tc-maven-plugin</artifactId>
         <version>1.1.0-SNAPSHOT</version>
         <configuration>
-          <bundleActivator>org.terracotta.modules.clustered-scala-actors-2.6.1</bundleActivator>
+          <bundleActivator>org.terracotta.modules.scala_actors_2_6_1.ScalaActorsTerracottaConfigurator </bundleActivator>
         </configuration>
       </plugin>
       <plugin>
@@ -106,11 +106,6 @@
     </plugins>
   </build> 
   <dependencies>
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>${scala.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.terracotta</groupId>
       <artifactId>terracotta</artifactId>
