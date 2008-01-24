@@ -53,32 +53,32 @@ public class ScalaActorsProtocol {
    */
   private String calculateId(final StaticJoinPoint jp) { 
     StringWriter sw = new StringWriter();
-	PrintWriter pw = new PrintWriter(sw);
-	pw.println(jp.getCalleeClass().getName());
-	new Throwable().printStackTrace(pw);
+    PrintWriter pw = new PrintWriter(sw);
+    pw.println(jp.getCalleeClass().getName());
+    new Throwable().printStackTrace(pw);
     return getDigest(sw.toString());
   }
 
   private String getDigest(String s) {
     try {
-	  s = s.replaceAll(System.getProperty("line.separator"), "\n");
-	  MessageDigest digest = MessageDigest.getInstance("MD5");
-	  digest.update(s.getBytes("ASCII"));
-	  byte[] b = digest.digest();
-	      
-	  StringBuilder sb = new StringBuilder();
-	  String hex = "0123456789ABCDEF";
-	  for (int i = 0; i < b.length; i++) {
-	    int n = b[i];
-	    sb.append(hex.charAt((n & 0xF) >> 4)).append(hex.charAt(n & 0xF));
-	  }
-	  return sb.toString();
+      s = s.replaceAll(System.getProperty("line.separator"), "\n");
+      MessageDigest digest = MessageDigest.getInstance("MD5");
+      digest.update(s.getBytes("ASCII"));
+      byte[] b = digest.digest();
+
+      StringBuilder sb = new StringBuilder();
+      String hex = "0123456789ABCDEF";
+      for (int i = 0; i < b.length; i++) {
+        int n = b[i];
+        sb.append(hex.charAt((n & 0xF) >> 4)).append(hex.charAt(n & 0xF));
+      }
+      return sb.toString();
     } catch (NoSuchAlgorithmException e) {
-	  // should never happen
-	  throw new RuntimeException(e.getMessage());
-	} catch (UnsupportedEncodingException e) {
-	  // should never happen
-	  throw new RuntimeException(e.getMessage());
-	}
+      // should never happen
+      throw new RuntimeException(e.getMessage());
+    } catch (UnsupportedEncodingException e) {
+      // should never happen
+      throw new RuntimeException(e.getMessage());
+    }
   }
 }
