@@ -23,8 +23,8 @@
     <logs>%(user.home)/terracotta/client-logs/scala/actors/%D</logs>
     
     <!-- 
-          Import the Terracotta Integration Module (TIM) for Scala Actor clustering.
-          Change the path to point to your Maven repository.
+        Import the Terracotta Integration Module (TIM) for Scala Actor clustering.
+        Change the path to point to your Maven repository.
     -->
     <modules>
       <repository>file:///Users/jonas/.m2/repository</repository>
@@ -35,11 +35,11 @@
   <application>
     <dso>     
       <!--
-            Add locks to the 'var' holding the state in the actor. 
-            You have to add two different locks, for read and write 
-            operations. Scala generates two different methods, the getter
-            has the same name as the 'var' while the getter has the name 
-            suffixed by '_$eq'. 
+          Add locks to the 'var' holding the state in the actor. 
+          You have to add two different locks, for read and write 
+          operations. Scala generates two different methods, the getter
+          has the same name as the 'var' while the getter has the name 
+          suffixed by '_$eq'. 
       -->
       <locks>
         <named-lock>
@@ -52,12 +52,17 @@
           <lock-level>read</lock-level>
           <method-expression>* samples.Cart.items()</method-expression>
         </named-lock>
+        
+        <!--
+            Needed for trying out the Cart factory and custom scope
+        -->
+        <!--
         <named-lock>
           <lock-name>Cart_newInstance</lock-name>
           <lock-level>write</lock-level>
           <method-expression>* samples.Cart$.newInstance(..)</method-expression>
         </named-lock>
-        
+        -->
       </locks>
       
       <!-- 
@@ -77,31 +82,36 @@
         <include>
           <class-expression>scala.Nil$</class-expression>
         </include>
- <include>
-           <class-expression>scala.collection.mutable.HashMap</class-expression>
-         </include>
-  <include>
-           <class-expression>scala.runtime.BoxedAnyArray</class-expression>
-         </include>
-         <include>
-           <class-expression>scala.runtime.BoxedArray</class-expression>
-         </include>
-    <include>
-           <class-expression>scala.collection.mutable.DefaultEntry</class-expression>
-         </include>
+        
+        <!--
+            Needed for trying out the Cart factory and custom scope
+        -->
+        <!--
+        <include>
+        	<class-expression>scala.collection.mutable.HashMap</class-expression>
+        </include>
+  			<include>
+        	<class-expression>scala.runtime.BoxedAnyArray</class-expression>
+        </include>
+        <include>
+        	<class-expression>scala.runtime.BoxedArray</class-expression>
+        </include>
+    		<include>
+        	<class-expression>scala.collection.mutable.DefaultEntry</class-expression>
+        </include>
+        -->
       </instrumented-classes>
 
-      <!-- 
-           Uncomment if you want to use a custom factory in order to control 
-           instantiation and scope of your actors.
+      <!--
+          Needed for trying out the Cart factory and custom scope
       -->
-      
+      <!--
       <roots>
         <root>
           <field-name>samples.Cart$.instances</field-name>
         </root>
       </roots>
-      
+      -->
     </dso>
   </application>
 </tc:tc-config>
