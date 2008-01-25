@@ -28,7 +28,7 @@ object ClusteredActorsSample {
  * <p>-- AddItem - adds an item to the list of current items
  */
 class Cart extends Actor {
-  var items: List[String] = Nil
+  private[this] var items: List[String] = Nil
 
   def act() {
     loop {
