@@ -1,9 +1,9 @@
 package samples
 
 import java.util.concurrent._
+import scala.collection.mutable._
 import scala.actors.Actor
 import scala.actors.Actor._
-import scala.collection.mutable._
 
 // Messages
 case object Tick
@@ -12,11 +12,11 @@ case class AddItem(desc: String)
 // Main runner
 object ClusteredActorsSample {
   def main(args: Array[String]) {
-    val cart = Cart.newInstance("myId")//new Cart 
+    val cart = new Cart // Cart.newInstance("myId") 
     cart.start
     cart.ping
     for (i <- 1 to 100) {
-      java.lang.Thread.sleep(2000L)
+      java.lang.Thread.sleep(1000L)
       cart ! AddItem("Item " + i)      
     }
   }
@@ -46,6 +46,9 @@ class Cart extends Actor {
   }
 }
 
+/**
+ * Cart factory, to be used with 'custom' scope
+ */
 object Cart {
   private[this] val instances: Map[Any, Cart] = new HashMap
 
