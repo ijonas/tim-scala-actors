@@ -35,11 +35,13 @@ public final class ScalaActorsTerracottaConfigurator extends TerracottaConfigura
     configHelper.addCustomAdapter(SCALA_INTERPRETER_MAIN_CLASS, new ScalaInterpreterClassLoaderAdapter());
     
     addExportedBundleClass(bundle, "org.terracotta.modules.scala_actors_2_6_1.ScalaClassLoader");
+    addExportedBundleClass(bundle, "org.terracotta.modules.scala_actors_2_6_1.InstanceScopeActorProtocol");
+    addExportedBundleClass(bundle, "org.terracotta.modules.scala_actors_2_6_1.ClassScopeActorProtocol");
     addExportedBundleClass(bundle, "org.terracotta.modules.scala_actors_2_6_1.ScalaAspectModule");
-    addExportedBundleClass(bundle, "org.terracotta.modules.scala_actors_2_6_1.ScalaActorsProtocol");
+    addExportedBundleClass(bundle, "org.terracotta.modules.scala_actors_2_6_1.ActorConfiguration");
 
-    for (Iterator<String> it = ScalaAspectModule.ACTOR_CLASSNAMES.iterator(); it.hasNext();) {
-      configureActor(it.next());
+    for (Iterator<ActorConfiguration> it = ScalaAspectModule.ACTOR_CONFIGURATIONS.iterator(); it.hasNext();) {
+      configureActor(it.next().getClassName());
     }
     
     // TODO: not ideal to pass in empty string, e.g. 'match-all', but we don't know in whiche packages
@@ -48,8 +50,6 @@ public final class ScalaActorsTerracottaConfigurator extends TerracottaConfigura
   }
 
   private void configureActor(String actor) {
-    System.out.println("Configuring clustering for Scala Actor: " + actor);
-
     // == define generic locking for actor ==
     LockDefinition lockDefinition = configHelper.createLockDefinition("actors_continuation_$eq", ConfigLockLevel.WRITE);
     lockDefinition.commit();

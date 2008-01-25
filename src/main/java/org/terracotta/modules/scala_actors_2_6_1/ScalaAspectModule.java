@@ -34,7 +34,7 @@ public class ScalaAspectModule implements AspectModule {
   // <scala> 
   //   <jee-application name="myWebApp">
   //     <actors> 
-  //       <actor>foo.bar.MyActor</actor>
+  //       <actor scope="custom">foo.bar.MyActor</actor>
   //     </actors>
   //   </jee-application>
   //   <!-- 
@@ -42,37 +42,58 @@ public class ScalaAspectModule implements AspectModule {
   //   -->
   // </scala>
   //
-  public static final List<String> ACTOR_CLASSNAMES;
+  public static final List<ActorConfiguration> ACTOR_CONFIGURATIONS;
   static {
     CLUSTERED_ACTORS_CONFIG_FILENAME = System.getProperty(
         CLUSTERED_SCALA_ACTORS_CONFIG_JVM_PROPERTY_NAME, DEFAULT_CLUSTERED_SCALA_ACTORS_CONFIG_FILENAME);
     if ((new File(CLUSTERED_ACTORS_CONFIG_FILENAME)).exists()) {
       System.out.println("Parsing scala actors config file: " + CLUSTERED_ACTORS_CONFIG_FILENAME);
-      ACTOR_CLASSNAMES = readActorsFromConfigFile();
+      ACTOR_CONFIGURATIONS = readActorsFromConfigFile();
+      for (Iterator<ActorConfiguration> it = ACTOR_CONFIGURATIONS.iterator(); it.hasNext();) {
+        ActorConfiguration conf = it.next();
+        System.out.println("Configuring clustering for Scala Actor [" + conf.getClassName() + "] with scope [" + conf.getScope() + "]");        
+      }
     } else {
-      ACTOR_CLASSNAMES = Collections.EMPTY_LIST;
+      ACTOR_CONFIGURATIONS = Collections.emptyList();
     }
   }
 
   public void deploy(final AspectModuleDeployer deployer) {
-    AspectDefinitionBuilder builder = deployer.newAspectBuilder(
-        "org.terracotta.modules.scala_actors_2_6_1.ScalaActorsProtocol", DeploymentModel.PER_JVM, null);
-    for (Iterator<String> it = ACTOR_CLASSNAMES.iterator(); it.hasNext();) {
-      String actor = it.next();
-      builder.addAdvice("around", "call(" + actor + ".new(..))", "newActor(StaticJoinPoint jp)");      
+    AspectDefinitionBuilder instanceScopeBuilder = deployer.newAspectBuilder(
+        "org.terracotta.modules.scala_actors_2_6_1.InstanceScopeActorProtocol", DeploymentModel.PER_JVM, null);
+    AspectDefinitionBuilder classScopeBuilder = deployer.newAspectBuilder(
+        "org.terracotta.modules.scala_actors_2_6_1.ClassScopeActorProtocol", DeploymentModel.PER_JVM, null);
+    for (Iterator<ActorConfiguration> it = ACTOR_CONFIGURATIONS.iterator(); it.hasNext();) {
+      ActorConfiguration conf = it.next();      
+      if (conf.getScope().equals(ActorConfiguration.CUSTOM_SCOPE)) {
+        continue;
+      } else if (conf.getScope().equals(ActorConfiguration.CLASS_SCOPE)) {
+        classScopeBuilder.addAdvice("around", "call(" + conf.getClassName() + ".new(..))", "newActor(StaticJoinPoint jp)");                      
+      } else if (conf.getScope().equals(ActorConfiguration.INSTANCE_SCOPE)) {
+        instanceScopeBuilder.addAdvice("around", "call(" + conf.getClassName() + ".new(..))", "newActor(StaticJoinPoint jp)");                               
+      } else {
+        System.out.println("Scala Actor scope unknown [" + conf.getScope() + "], needs to be one of [instance (default), class or custom]");
+      }
     }
   }
 
-  private static List<String> readActorsFromConfigFile() {
-    List<String> actors = new ArrayList<String>();
+  private static List<ActorConfiguration> readActorsFromConfigFile() {
+    List<ActorConfiguration> actors = new ArrayList<ActorConfiguration>();
     BufferedReader reader = null;
     try {
       reader = new BufferedReader(new FileReader(CLUSTERED_ACTORS_CONFIG_FILENAME));
-      String actor;
-      while ((actor = reader.readLine()) != null) {
-        actor.trim();
-        if (actor.startsWith("#") || actor.equals("")) continue; // allow comments and blank lines
-        actors.add(actor);
+      String line;
+      while ((line = reader.readLine()) != null) {
+        line.trim();
+        if (line.startsWith("#") || line.equals("")) continue; // allow comments and blank lines
+        int colon = line.indexOf(':');
+        if (colon == -1) { // default -> instance scope
+          actors.add(new ActorConfiguration(line.trim(), ActorConfiguration.INSTANCE_SCOPE));          
+        } else {
+          String actor = line.substring(0, colon);
+          String scope = line.substring(colon + 1, line.length());
+          actors.add(new ActorConfiguration(actor.trim(), scope.trim()));
+        }
       }
     } catch (IOException e) {
       System.err.println("Error when trying to read the scala actors config file: " + e.toString());

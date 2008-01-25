@@ -52,6 +52,12 @@
           <lock-level>read</lock-level>
           <method-expression>* samples.Cart.items()</method-expression>
         </named-lock>
+        <named-lock>
+          <lock-name>Cart_newInstance</lock-name>
+          <lock-level>write</lock-level>
+          <method-expression>* samples.Cart$.newInstance(..)</method-expression>
+        </named-lock>
+        
       </locks>
       
       <!-- 
@@ -71,19 +77,31 @@
         <include>
           <class-expression>scala.Nil$</class-expression>
         </include>
+ <include>
+           <class-expression>scala.collection.mutable.HashMap</class-expression>
+         </include>
+  <include>
+           <class-expression>scala.runtime.BoxedAnyArray</class-expression>
+         </include>
+         <include>
+           <class-expression>scala.runtime.BoxedArray</class-expression>
+         </include>
+    <include>
+           <class-expression>scala.collection.mutable.DefaultEntry</class-expression>
+         </include>
       </instrumented-classes>
 
       <!-- 
            Uncomment if you want to use a custom factory in order to control 
            instantiation and scope of your actors.
       -->
-      <!--
+      
       <roots>
         <root>
-          <field-name>samples.Cart$.instance</field-name>
+          <field-name>samples.Cart$.instances</field-name>
         </root>
       </roots>
-      -->
+      
     </dso>
   </application>
 </tc:tc-config>

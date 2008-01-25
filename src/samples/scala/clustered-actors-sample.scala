@@ -3,6 +3,7 @@ package samples
 import java.util.concurrent._
 import scala.actors.Actor
 import scala.actors.Actor._
+import scala.collection.mutable._
 
 // Messages
 case object Tick
@@ -11,7 +12,7 @@ case class AddItem(desc: String)
 // Main runner
 object ClusteredActorsSample {
   def main(args: Array[String]) {
-    val cart = new Cart //Cart()
+    val cart = Cart.newInstance("myId")//new Cart 
     cart.start
     cart.ping
     for (i <- 1 to 100) {
@@ -26,17 +27,17 @@ object ClusteredActorsSample {
  * <p>-- Tick - prints out the list of current items
  * <p>-- AddItem - adds an item to the list of current items
  */
-/*
 class Cart extends Actor {
-  def act() = loop(Nil)
+  var items: List[String] = Nil
 
-  def loop(items: List[String]) {
-    react {
-      case Tick => 
-        println("Items: " + items)
-        loop(items)
-      case AddItem(item) => 
-        loop(item :: items)
+  def act() {
+    loop {
+      react {
+        case AddItem(item) => 
+          items = item :: items
+        case Tick => 
+          println("Items: " + items)
+      }
     }
   }
 
@@ -44,40 +45,20 @@ class Cart extends Actor {
     ActorPing.scheduleAtFixedRate(this, Tick, 0L, 5000L)
   }
 }
-*/
-/**
- * Cart companion object is a factory who's sole instance in a Terracotta root: Cart.instance.
- * <p>Usage: val cart = Cart()
- */
+
 object Cart {
-  def apply(): Cart = {
-    if (instance == null) instance = new Cart
-    instance.start; instance
+  private[this] val instances: Map[Any, Cart] = new HashMap
+
+  def newInstance(id: Any): Cart = {
+    instances.get(id) match {
+      case Some(cart) => cart
+      case None => 
+        val cart = new Cart
+        instances += (id -> cart)
+        cart
+    }
   }
-  private[this] var instance: Cart = null
 }
-
- 
-  // same as above but state in a 'var' instead of passing it on recursively
-  class Cart extends Actor {
-   var items: List[String] = Nil
-
-   def ping = {
-     ActorPing.scheduleAtFixedRate(this, Tick, 0L, 5000L)
-   }
-
-   def act() {
-     loop {
-       react {
-         case Tick => 
-           println("Items: " + items)
-         case AddItem(item) => 
-           items = item :: items
-       }
-     }
-   }
- }
-
 
 // =============================================
 /**
