@@ -204,6 +204,11 @@ public final class ScalaActorsTerracottaConfigurator extends TerracottaConfigura
     lockPattern = new StringBuilder("* ").append(actor).append(".kill()").toString();
     configHelper.addLock(lockPattern, lockDefinition);
     
+    lockDefinition = configHelper.createLockDefinition("actors_anon_apply", ConfigLockLevel.WRITE);
+    lockDefinition.commit();
+    lockPattern = new StringBuilder("* ").append(actor).append("*.apply(..)").toString();
+    configHelper.addLock(lockPattern, lockDefinition);
+
     // == define locking for message queue ==
     lockDefinition = configHelper.createLockDefinition("actors_message_queue_append", ConfigLockLevel.WRITE);
     lockDefinition.commit();
