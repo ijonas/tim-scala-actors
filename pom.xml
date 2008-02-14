@@ -12,7 +12,7 @@
   <parent>
     <groupId>org.terracotta.forge</groupId>
     <artifactId>tim-parent</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
   </parent>
   <properties>
     <scala.version>2.6.1</scala.version>
